@@ -77,23 +77,25 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/login.html",
-                                "/newindex.html",
-                                "/newlogin.html",
-                                "/newsignup.html",
-                                "/createlibrary.html",
-                                "/signup.html",
-                                "/otp.html",
-                                "/dashboard.html",
-                                "/library.html",
 
-                                "/css/**",
-                                "/js/**",
-                                "/images/**",
+                                "/https://seat-manger-frontend.vercel.app/**"
+                                // "/",
+                                // "/index.html",
+                                // "/login.html",
+                                // "/newindex.html",
+                                // "/newlogin.html",
+                                // "/newsignup.html",
+                                // "/createlibrary.html",
+                                // "/signup.html",
+                                // "/otp.html",
+                                // "/dashboard.html",
+                                // "/library.html",
 
-                                "/api/auth/**"
+                                // "/css/**",
+                                // "/js/**",
+                                // "/images/**",
+
+                                // "/api/auth/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
