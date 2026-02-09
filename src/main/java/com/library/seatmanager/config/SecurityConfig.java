@@ -1,11 +1,20 @@
 package com.library.seatmanager.config;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
@@ -70,60 +79,53 @@ public class SecurityConfig {
 //    }
 
 
-//     @Bean
-//     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+// @Bean
+// public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-//         http
-//                 .csrf(csrf -> csrf.disable())
-//                 .authorizeHttpRequests(auth -> auth
-//                         .requestMatchers(
+//     http
+//         .cors(cors -> {}) // ✅ ENABLE CORS
+//         .csrf(csrf -> csrf.disable())
+//         .authorizeHttpRequests(auth -> auth
+//                 .requestMatchers("/api/auth/**").permitAll()
+//                 .anyRequest().authenticated()
+//         )
+//         .formLogin(form -> form.disable());
 
-//                                 "/https://seat-manger-frontend.vercel.app/**"
-//                                 // "/",
-//                                 // "/index.html",
-//                                 // "/login.html",
-//                                 // "/newindex.html",
-//                                 // "/newlogin.html",
-//                                 // "/newsignup.html",
-//                                 // "/createlibrary.html",
-//                                 // "/signup.html",
-//                                 // "/otp.html",
-//                                 // "/dashboard.html",
-//                                 // "/library.html",
-
-//                                 // "/css/**",
-//                                 // "/js/**",
-//                                 // "/images/**",
-
-//                                 // "/api/auth/**"
-//                         ).permitAll()
-//                         .anyRequest().authenticated()
-//                 )
-//                 .formLogin(form -> form.disable())
-//                 .logout(logout -> logout
-//                         .logoutUrl("/api/auth/logout")
-//                         .logoutSuccessUrl("/login.html")
-//                 );
-
-//         return http.build();
-//     }
+//     return http.build();
+//
 
 
-@Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    http
-        .cors(cors -> {}) // ✅ ENABLE CORS
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .anyRequest().authenticated()
-        )
-        .formLogin(form -> form.disable());
+ @Bean
+    public SecurityFilterChain secuirtyFilterChain(HttpSecurity http) throws Exception {
 
-    return http.build();
-}
+//		 because direct csrf is depricated that's why we are using (csrf-> csrf. type thing so these thing are saying as lamda)
+        http.csrf(csrf-> csrf.disable())
+                .cors(cors-> cors.configurationSource(new CorsConfigurationSource() {
 
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                        CorsConfiguration cfg= new CorsConfiguration();
+                        cfg.setAllowedOrigins(Arrays.asList(
+                                "https://seat-manger-frontend.vercel.app/"
+
+                        ));
+                        cfg.setAllowedMethods(Collections.singletonList("*"));
+                        cfg.setAllowCredentials(true);
+                        cfg.setAllowedHeaders(Collections.singletonList("*"));
+                        cfg.setExposedHeaders(Arrays.asList("Authorization"));
+                        cfg.setMaxAge(3600L);
+                        return cfg;
+                    }
+                }))
+                .authorizeHttpRequests(auth->
+                         auth.requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest()
+                        .authenticated())
+                .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return http.build();
+    }
 
 @Bean
 public PasswordEncoder passwordEncoder() {
