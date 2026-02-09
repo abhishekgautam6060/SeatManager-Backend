@@ -70,43 +70,60 @@ public class SecurityConfig {
 //    }
 
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//     @Bean
+//     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
+//         http
+//                 .csrf(csrf -> csrf.disable())
+//                 .authorizeHttpRequests(auth -> auth
+//                         .requestMatchers(
 
-                                "/https://seat-manger-frontend.vercel.app/**"
-                                // "/",
-                                // "/index.html",
-                                // "/login.html",
-                                // "/newindex.html",
-                                // "/newlogin.html",
-                                // "/newsignup.html",
-                                // "/createlibrary.html",
-                                // "/signup.html",
-                                // "/otp.html",
-                                // "/dashboard.html",
-                                // "/library.html",
+//                                 "/https://seat-manger-frontend.vercel.app/**"
+//                                 // "/",
+//                                 // "/index.html",
+//                                 // "/login.html",
+//                                 // "/newindex.html",
+//                                 // "/newlogin.html",
+//                                 // "/newsignup.html",
+//                                 // "/createlibrary.html",
+//                                 // "/signup.html",
+//                                 // "/otp.html",
+//                                 // "/dashboard.html",
+//                                 // "/library.html",
 
-                                // "/css/**",
-                                // "/js/**",
-                                // "/images/**",
+//                                 // "/css/**",
+//                                 // "/js/**",
+//                                 // "/images/**",
 
-                                // "/api/auth/**"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .formLogin(form -> form.disable())
-                .logout(logout -> logout
-                        .logoutUrl("/api/auth/logout")
-                        .logoutSuccessUrl("/login.html")
-                );
+//                                 // "/api/auth/**"
+//                         ).permitAll()
+//                         .anyRequest().authenticated()
+//                 )
+//                 .formLogin(form -> form.disable())
+//                 .logout(logout -> logout
+//                         .logoutUrl("/api/auth/logout")
+//                         .logoutSuccessUrl("/login.html")
+//                 );
 
-        return http.build();
-    }
+//         return http.build();
+//     }
+
+
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+    http
+        .cors(cors -> {}) // ✅ ENABLE CORS
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll()
+                .anyRequest().authenticated()
+        )
+        .formLogin(form -> form.disable());
+
+    return http.build();
+}
+
 
 @Bean
 public PasswordEncoder passwordEncoder() {
